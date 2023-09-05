@@ -10,71 +10,77 @@
 
 class NumeroRomano:
     def __init__(self, valor):
-        self.valor = valor
+        self.decimal = valor
+        self.romano = ''
 
     def para_romano(self):
-        if not 1 < self.valor:
-            return "Valor não pode ser negativo."
-        
-        values = [
-            1000, 900, 500, 400,
-            100, 90, 50, 40,
-            10, 9, 5, 4,
-            1
-        ]
-        symbols = [
-            "M", "CM", "D", "CD",
-            "C", "XC", "L", "XL",
-            "X", "IX", "V", "IV",
-            "I"
-        ]
-    
-        num_roman = ''
-        i = 0
-        while self.valor > 0:
-            for _ in range(self.valor // values[i]):
-                num_roman += symbols[i]
-                self.valor -= values[i]
-            i += 1 
-        return num_roman
+        romanos = {
+            1000: 'M', 900: 'CM', 500: 'D', 400: 'CD',
+            100: 'C', 90: 'XC', 50: 'L', 40: 'XL',
+            10: 'X', 9: 'IX', 5: 'V', 4: 'IV', 1: 'I'
+        }
+
+        romano = ''
+        decimal_romano = self.decimal
+
+        for valor, simbolo in romanos.items():
+            while decimal_romano >= valor:
+                romano += simbolo
+                decimal_romano -= valor
+
+        self.romano = romano
+        return romano
 
     def para_decimal(self):
-        symbols = [
-            "M", "CM", "D", "CD",
-            "C", "XC", "L", "XL",
-            "X", "IX", "V", "IV",
-            "I"
-        ]
-        values = [
-            1000, 900, 500, 400,
-            100, 90, 50, 40,
-            10, 9, 5, 4,
-            1
-        ]
+        romanos = {
+            'I': 1, 'V': 5, 'X': 10, 'L': 50,
+            'C': 100, 'D': 500, 'M': 1000
+        }
 
-        num_dec = ''
-        i = 0
-        while self.valor > 0:
-            for _ in range(self.valor // symbols[i]):
-                num_dec += values[i]
-                self.valor -= symbols[i]
-            i += 1
-        return num_dec
+        decimal = 0
+        valor_prev = 0
+
+        for simbolo in reversed(self.romano):
+            valor = romanos[simbolo]
+            if valor < valor_prev:
+                decimal -= valor
+            else:
+                decimal += valor
+            valor_prev = valor
+
+        return decimal
 
     @classmethod
     def de_romano(cls, romano):
-        pass
+        romanos = {
+            'I': 1, 'V': 5, 'X': 10, 'L': 50,
+            'C': 100, 'D': 500, 'M': 1000
+        }
 
-numero1 = NumeroRomano(5000)
+        decimal = 0
+        valor_prev = 0
+
+        for simbolo in reversed(romano):
+            valor = romanos[simbolo]
+            if valor < valor_prev:
+                decimal -= valor
+            else:
+                decimal += valor
+            valor_prev = valor
+            retorno = NumeroRomano(decimal)
+            retorno.para_romano()
+
+        return retorno
+
+numero1 = NumeroRomano(1983)
 romano1 = numero1.para_romano()
-decimal1= numero1.para_decimal()
+decimal1 = numero1.para_decimal()
 
-print(f"Número decimal: {numero1.valor}")
-print(f"Número romano: {romano1}")
-print(f"Conversão para decimal: {decimal1}")
+print(f"Número decimal: {numero1.decimal}")
+print(f"Conversão para número romano: {romano1}")
 
 numero2 = NumeroRomano.de_romano("MCMXCIV")
 decimal2 = numero2.para_decimal()
 
-print(f"Número romano: {numero2.valor}")
+print(f"Número romano: {numero2.romano}")
 print(f"Conversão para decimal: {decimal2}")
